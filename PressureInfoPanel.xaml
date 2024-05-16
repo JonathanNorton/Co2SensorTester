@@ -1,0 +1,173 @@
+﻿<UserControl x:Class="Co2SensorTester.PressureInfoPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Co2SensorTester"
+             xmlns:vc="clr-namespace:CommonValueConverters;assembly=CommonWpfValueConverters" 
+             d:DataContext="{d:DesignInstance Type=local:PressureInfoPanel}"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <vc:ValueConverterGroup x:Key="status2color">
+            <vc:BoolToColorConverter TrueColor="Black" FalseColor="#ddd"/>
+            <vc:ColorToBrushConverter/>
+        </vc:ValueConverterGroup>
+
+        <vc:ValueConverterGroup x:Key="status2color2">
+            <vc:BoolToColorConverter TrueColor="#000" FalseColor="#FFF"/>
+            <vc:ColorToBrushConverter/>
+        </vc:ValueConverterGroup>
+
+        <vc:BoolToVisibilityConverter x:Key="b2v"
+                                      TrueVisibility="Visible"
+                                      FalseVisibility="Collapsed"/>
+
+        <vc:BoolToVisibilityConverter x:Key="ib2v"
+                                      TrueVisibility="Collapsed"
+                                      FalseVisibility="Visible"/>
+
+
+    </UserControl.Resources>
+
+    <Grid x:Name="grid" HorizontalAlignment="Center" VerticalAlignment="Center"
+          MaxHeight="700" MaxWidth="600"
+          MinWidth="225" MinHeight="165">
+
+        <Border Grid.RowSpan="3" Grid.ColumnSpan="2">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="#f1f1f1"/>
+                    <Setter Property="Opacity" Value="1"/>
+                    <Setter Property="BorderThickness" Value="1.75"/>
+                    <Setter Property="BorderBrush" Value="Black"/>
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Status}" Value="False">
+                            <DataTrigger.Setters>
+                                <Setter Property="BorderBrush" Value="White"/>
+                                <Setter Property="TextElement.Foreground" Value="White"/>
+                            </DataTrigger.Setters>
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard x:Name="sb1">
+                                    <Storyboard>
+                                        <ColorAnimation BeginTime="0:0:0.0" Duration="0:0:0.5" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="Red"/>
+                                        <ColorAnimation BeginTime="0:0:0.5" Duration="0:0:0.5" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="White"/>
+                                        <ColorAnimation BeginTime="0:0:1.0" Duration="0:0:0.5" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="Red"/>
+                                        <ColorAnimation BeginTime="0:0:1.5" Duration="0:0:0.5" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="White"/>
+                                        <ColorAnimation BeginTime="0:0:1.0" Duration="0:0:0.5" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="Red"/>
+                                        <ColorAnimation BeginTime="0:0:1.5" Duration="0:0:0.5" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="White"/>
+                                        <ColorAnimation BeginTime="0:0:2.0" Duration="0:0:0.5" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="Red"/>
+                                        <ColorAnimation BeginTime="0:0:2.5" Duration="0:0:0.5" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="White"/>
+                                        <ColorAnimation BeginTime="0:0:3.0" Duration="0:0:0.5" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="Gray"/>
+                                        <DoubleAnimation BeginTime="0:0:2" Duration="0:0:1" Storyboard.TargetProperty="Opacity" To="0.4"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Status}" Value="True">
+                            <Setter Property="Background" Value="#f1f1f1"/>
+                            <Setter Property="Opacity" Value="1"/>
+                            <DataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="sb1"/>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+
+                    </Style.Triggers>
+
+                </Style>
+            </Border.Style>
+
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+
+                <TextBlock Text="{Binding Label}"
+                           Grid.ColumnSpan="2"
+                           Grid.Row="0"
+                           FontWeight="Bold"
+                           FontSize="18"
+                           HorizontalAlignment="Center"
+                           Margin="4"
+                           Foreground="{Binding Status, Converter={StaticResource status2color}}"
+                           />
+
+                <TextBlock Grid.ColumnSpan="2" Grid.Row="1"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                           Margin="4"
+                           FontSize="32"
+                           Foreground="{Binding Status, Converter={StaticResource status2color}}">
+                    <Run Text="{Binding Pressure, StringFormat={}{0:0.0000#}}"/><Run Text=" bar" FontSize="28" FontWeight="SemiBold"/>
+                </TextBlock>
+
+
+                <StackPanel Grid.Row="2" Grid.Column="0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center">
+                    <!-- Cascadia Code / Consolas -->
+                    <TextBlock Text="{Binding Raw, StringFormat={}{0:0.00000} raw}"
+                               FontFamily="Consolas"
+                               Opacity="0.5"
+                               FontSize="16"
+                               Margin="16,4,8,4"
+                               Visibility="{Binding HideRaw, Converter={StaticResource ib2v}}"/>
+                    <TextBlock Text="Span Point:"
+                               Margin="16,4,8,2"/>
+                    <TextBlock Text="{Binding Span}"
+                               Background="#55BBBBBB"
+                               Padding="0,4,0,4"
+                               Margin="16,4,8,4"
+                               Visibility="{Binding ShowSpanEntry, Converter={StaticResource ib2v}}"
+                               MouseLeftButtonDown="TextBlock_MouseLeftButtonDown"
+                               MouseLeftButtonUp="TextBlock_MouseLeftButtonUp"
+                               MouseLeave="TextBlock_MouseLeave"/>
+                    <TextBox Text="{Binding SpanEntry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             x:Name="tb_span"
+                             Foreground="Gray"
+                             FontSize="16"
+                             Margin="16,4,8,4"
+                             IsEnabled="{Binding Status}"
+                             LostFocus="TextBox_LostFocus"
+                             Visibility="{Binding ShowSpanEntry, Converter={StaticResource b2v}}"/>
+                </StackPanel>
+
+
+                <StackPanel Grid.Row="2" Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Margin="8,0"
+                            VerticalAlignment="Center"
+                            Visibility="{Binding CanCalibrate, Converter={StaticResource b2v}}">
+                    <StackPanel.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Margin" Value="4"/>
+                            <Setter Property="Padding" Value="16,0"/>
+                            <Setter Property="CommandParameter" Value="{Binding CommandParameter}"/>
+                            <Setter Property="FontSize" Value="11"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button Content="Span"  Click="Button_Click" Command="{Binding SpanCommand}" IsEnabled="{Binding Status}"/>
+                    <Button Content="Zero"  Click="Button_Click" Command="{Binding ZeroCommand}" IsEnabled="{Binding Status}"/>
+                    <Button Content="Reset" Click="Button_Click" Command="{Binding ResetCommand}"/>
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+
+    </Grid>
+</UserControl>
